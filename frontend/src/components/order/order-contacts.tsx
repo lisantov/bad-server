@@ -1,5 +1,5 @@
 import InputMask from '@mona-health/react-input-mask'
-import { SyntheticEvent, useEffect, useRef } from 'react'
+import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AppRoute } from '../../utils/constants'
 import Button from '../button/button'
@@ -16,6 +16,7 @@ import {
 } from '../../services/slice/orderForm'
 import EditorInput from '../editor-text/editor-input'
 import styles from './order.module.scss'
+import api from '@api'
 
 export function OrderContacts() {
     const location = useLocation()
@@ -25,12 +26,17 @@ export function OrderContacts() {
     const formRef = useRef<HTMLFormElement | null>(null)
     const { setInfo, createOrder } = useActionCreators(orderFormActions)
     const { resetBasket } = useActionCreators(basketActions)
+    const [csrfToken, setCsrfToken] = useState<string>('')
 
     const { values, handleChange, errors, isValid, setValuesForm } =
         useFormWithValidation<ContactsFormValues>(
             { email: '', phone: '', comment: '' },
             formRef.current
         )
+
+    useEffect(() => {
+        api.getCsrfToken().then(res => setCsrfToken(res.data))
+    }, [])
 
     useEffect(() => {
         // восстанавливаем значение формы из стора
@@ -48,7 +54,7 @@ export function OrderContacts() {
         e.preventDefault()
         setInfo(values)
         // т.к. на момент отправки запроса данные введенные в поля еще не записаны в store, добавляем в запрос их вручную
-        createOrder({ ...orderPersistData, ...values })
+        createOrder({ orderData: { ...orderPersistData, ...values }, csrf: csrfToken })
             .unwrap()
             .then((dataResponse) => {
                 resetBasket()

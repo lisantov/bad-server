@@ -1,7 +1,7 @@
 import Button from '@components/button'
 import Form, { Input } from '@components/form'
 import useFormWithValidation from '@components/form/hooks/useFormWithValidation'
-import { SyntheticEvent, useRef, useState } from 'react'
+import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useActionCreators } from '../../services/hooks'
@@ -13,6 +13,7 @@ import {
     OptionType,
 } from '../../utils/constants'
 import { IFile } from '../../utils/types'
+import api from '../../utils/weblarek-api'
 import FileInput from '../form/file-input'
 import Select from '../select'
 import styles from './admin.module.scss'
@@ -30,11 +31,16 @@ export default function AdminNewProduct() {
         useActionCreators(productsActions)
     const fileRef = useRef<HTMLInputElement>(null)
     const [selectedFile, setSelectedFile] = useState<IFile | null>(null)
+    const [csrfToken, setCsrfToken] = useState<string>('')
     const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
         null
     )
     const isValidForm =
         isValid && Boolean(selectedFile) && Boolean(selectedCategory)
+
+    useEffect(() => {
+        api.getCsrfToken().then(res => setCsrfToken(res.data))
+    }, [])
 
     const navigateAdminList = () => navigate(AppRoute.Admin)
 
@@ -62,7 +68,7 @@ export default function AdminNewProduct() {
             image: selectedFile,
             price: values.price ? values.price : null,
         }
-        await createProduct(dataProduct)
+        await createProduct({ data: dataProduct, csrf: csrfToken })
             .unwrap()
             .then(() => navigateAdminList())
             .catch((error) => toast.error(error.message))

@@ -21,6 +21,7 @@ import FileInput from '../form/file-input'
 import Select from '../select'
 import styles from './admin.module.scss'
 import { ProductFormValues } from './helpers/types'
+import api from '@api'
 
 export default function AdminEditProduct() {
     const navigate = useNavigate()
@@ -38,11 +39,16 @@ export default function AdminEditProduct() {
         )
     const fileRef = useRef<HTMLInputElement | null>(null)
     const [selectedFile, setSelectedFile] = useState<IFile | null>(null)
+    const [csrfToken, setCsrfToken] = useState<string>('')
     const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
         null
     )
     const isValidForm = isValid && Boolean(selectedCategory)
     const navigateAdminList = () => navigate(AppRoute.Admin)
+
+    useEffect(() => {
+        api.getCsrfToken().then(res => setCsrfToken(res.data))
+    }, [])
 
     const handleFileChange = (e: SyntheticEvent<HTMLInputElement>) => {
         if (e.currentTarget.files?.length) {
@@ -85,7 +91,7 @@ export default function AdminEditProduct() {
         }
 
         editId &&
-            updateProduct({ data: dataProduct, id: editId })
+            updateProduct({ data: dataProduct, id: editId, csrf: csrfToken })
                 .unwrap()
                 .then(() => navigateAdminList())
                 .catch((error) => toast.error(error.message))
@@ -97,7 +103,7 @@ export default function AdminEditProduct() {
 
     const handleDeleteProduct = () => {
         editId &&
-            deleteProduct(editId)
+            deleteProduct({ id: editId, csrf: csrfToken })
                 .unwrap()
                 .then(() => navigateAdminList())
                 .catch((error) => toast.error(error.message))

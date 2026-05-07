@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import csrf from 'csurf'
 import {
     getCsrfToken,
     getCurrentUser,
@@ -11,6 +12,8 @@ import {
 } from '../controllers/auth'
 import auth from '../middlewares/auth'
 
+const csrfProtection = csrf({ cookie: true })
+
 const authRouter = Router()
 
 authRouter.get('/user', auth, getCurrentUser)
@@ -20,6 +23,6 @@ authRouter.post('/login', login)
 authRouter.get('/token', refreshAccessToken)
 authRouter.get('/logout', logout)
 authRouter.post('/register', register)
-authRouter.post('/csrf-token', getCsrfToken)
+authRouter.get('/csrf-token', csrfProtection, getCsrfToken)
 
 export default authRouter

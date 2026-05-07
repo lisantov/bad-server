@@ -208,7 +208,7 @@ const updateCurrentUser = async (
 
 const getCsrfToken = (req: Request, res: Response, next: NextFunction)=> {
     try {
-        res.send(req.csrfToken())
+        res.json({ success: true, data: req.csrfToken() })
     } catch(error) {
         next(error)
     }
