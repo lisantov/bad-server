@@ -206,6 +206,14 @@ const updateCurrentUser = async (
     }
 }
 
+const getCsrfToken = (req: Request, res: Response, next: NextFunction)=> {
+    try {
+        res.send(req.csrfToken())
+    } catch(error) {
+        next(error)
+    }
+}
+
 export {
     getCurrentUser,
     getCurrentUserRoles,
@@ -214,4 +222,5 @@ export {
     refreshAccessToken,
     register,
     updateCurrentUser,
+    getCsrfToken
 }
