@@ -24,21 +24,21 @@ export const checkUserRoles = createAsyncThunk<string[], void>(
 
 export const registerUser = createAsyncThunk<
     UserResponseToken,
-    UserRegisterBodyDto
->(`user/registerUser`, async (dataUser, { extra: api }) => {
-    const data = await api.registerUser(dataUser)
+    { dataUser: UserRegisterBodyDto, csrf: string }
+>(`user/registerUser`, async ({ dataUser, csrf }, { extra: api }) => {
+    const data = await api.registerUser(dataUser, csrf)
     setCookie('accessToken', data.accessToken)
     return data
 })
 
-export const loginUser = createAsyncThunk<UserResponseToken, UserLoginBodyDto>(
-    `user/loginUser`,
-    async (dataUser, { extra: api }) => {
-        const data = await api.loginUser(dataUser)
-        setCookie('accessToken', data.accessToken)
-        return data
-    }
-)
+export const loginUser = createAsyncThunk<
+    UserResponseToken,
+    { dataUser: UserLoginBodyDto; csrf: string }
+>(`user/loginUser`, async ({ dataUser, csrf }, { extra: api }) => {
+    const data = await api.loginUser(dataUser, csrf)
+    setCookie('accessToken', data.accessToken)
+    return data
+})
 
 export const logoutUser = createAsyncThunk<ServerResponse<unknown>, void>(
     `user/logoutUser`,
