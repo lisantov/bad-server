@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "description": "< Добавьте описание проекта в свободной форме >",
   "main": "dist/app.js",
+  "overrides": {
+    "csurf": {
+      "cookie": ">=0.7.0"
+    },
+    "celebrate": {
+      "lodash": ">=4.18.1"
+    }
+  },
   "scripts": {
     "lint": "npx eslint src/**/*.ts",
     "format": "prettier ./src --write",
@@ -40,10 +48,11 @@
     "@types/csurf": "^1.11.5",
     "@types/jsonwebtoken": "^9.0.6",
     "bcryptjs": "^2.4.3",
-    "celebrate": "^12.1.2",
+    "celebrate": "^15.0.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csurf": "^1.11.0",
+    "lodash": "^4.18.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
