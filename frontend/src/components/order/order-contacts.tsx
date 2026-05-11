@@ -54,7 +54,7 @@ export function OrderContacts() {
         e.preventDefault()
         setInfo(values)
         // т.к. на момент отправки запроса данные введенные в поля еще не записаны в store, добавляем в запрос их вручную
-        createOrder({ orderData: { ...orderPersistData, ...values }, csrf: csrfToken })
+        createOrder({ orderData: { ...orderPersistData, ...values, phone: values.phone.replace(/[\s()]/g,'') }, csrf: csrfToken })
             .unwrap()
             .then((dataResponse) => {
                 resetBasket()
