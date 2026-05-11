@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, RequestHandler } from 'express'
 import csrf from 'csurf'
 import {
     getCsrfToken,
@@ -13,7 +13,7 @@ import {
 import auth from '../middlewares/auth'
 
 const authRouter = Router()
-const csrfProtection = csrf({ cookie: true })
+const csrfProtection: RequestHandler = csrf({ cookie: true }) as unknown as RequestHandler
 
 authRouter.get('/user', auth, getCurrentUser)
 authRouter.patch('/me', auth, updateCurrentUser)

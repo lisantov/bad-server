@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, RequestHandler } from 'express'
 import csrf from 'csurf'
 import {
     createOrder,
@@ -14,7 +14,7 @@ import { validateOrderBody } from '../middlewares/validations'
 import { Role } from '../models/user'
 
 const orderRouter = Router()
-const csrfProtection = csrf({ cookie: true })
+const csrfProtection: RequestHandler = csrf({ cookie: true }) as unknown as RequestHandler
 
 orderRouter.post('/', auth, csrfProtection, validateOrderBody, createOrder)
 orderRouter.get('/all', auth, getOrders)

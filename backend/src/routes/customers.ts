@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, RequestHandler } from 'express'
 import csrf from 'csurf'
 import {
     deleteCustomer,
@@ -8,7 +8,7 @@ import {
 } from '../controllers/customers'
 import auth from '../middlewares/auth'
 
-const csrfProtection = csrf({ cookie: true })
+const csrfProtection: RequestHandler = csrf({ cookie: true }) as unknown as RequestHandler
 const customerRouter = Router()
 
 customerRouter.get('/', auth, getCustomers)

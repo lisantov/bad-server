@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, RequestHandler } from 'express'
 import csrf from 'csurf'
 import {
     createProduct,
@@ -14,7 +14,7 @@ import {
 } from '../middlewares/validations'
 import { Role } from '../models/user'
 
-const csrfProtection = csrf({ cookie: true })
+const csrfProtection: RequestHandler = csrf({ cookie: true }) as unknown as RequestHandler
 
 const productRouter = Router()
 
