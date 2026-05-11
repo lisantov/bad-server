@@ -14,8 +14,8 @@ import routes from './routes'
 
 const { PORT = 3000 } = process.env
 const limiter = rateLimit({
-    windowMs: 1000 * 60,
-    limit: 15,
+    windowMs: 1000 * 60 * 10,
+    limit: 60,
     standardHeaders: true,
     legacyHeaders: false
 })
@@ -23,7 +23,9 @@ const app = express()
 
 app.use(cookieParser())
 
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:5173'
+}))
 // app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }));
 // app.use(express.static(path.join(__dirname, 'public')));
 
