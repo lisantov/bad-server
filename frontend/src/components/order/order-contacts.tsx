@@ -35,7 +35,7 @@ export function OrderContacts() {
         )
 
     useEffect(() => {
-        api.getCsrfToken().then(res => setCsrfToken(res.data))
+        api.getCsrfToken().then(res => setCsrfToken(res.csrfToken))
     }, [])
 
     useEffect(() => {

@@ -23,7 +23,7 @@ const ActionsButton = () => {
     const { updateOrderById } = useActionCreators(ordersActions)
 
     useEffect(() => {
-        api.getCsrfToken().then(res => setCsrfToken(res.data))
+        api.getCsrfToken().then(res => setCsrfToken(res.csrfToken))
     }, [])
 
     const handleUpdateOrder = (status: StatusType) => {

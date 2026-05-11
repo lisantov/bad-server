@@ -304,7 +304,7 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
     }
 
     getCsrfToken = () => {
-        return this.request<ServerResponse<{ data: string }>>('/auth/csrf-token', {
+        return this.request<{ csrfToken: string }>('/auth/csrf-token', {
             method: 'GET',
             credentials: 'include',
         })

@@ -21,7 +21,7 @@ export default function RegisterPage() {
     const [csrfToken, setCsrfToken] = useState<string>('')
 
     useEffect(() => {
-        api.getCsrfToken().then(res => setCsrfToken(res.data))
+        api.getCsrfToken().then(res => setCsrfToken(res.csrfToken))
     }, [])
 
     const handleFormSubmit = (e: SyntheticEvent<HTMLFormElement>) => {

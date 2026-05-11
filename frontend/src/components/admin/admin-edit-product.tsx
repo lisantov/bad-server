@@ -47,7 +47,7 @@ export default function AdminEditProduct() {
     const navigateAdminList = () => navigate(AppRoute.Admin)
 
     useEffect(() => {
-        api.getCsrfToken().then(res => setCsrfToken(res.data))
+        api.getCsrfToken().then(res => setCsrfToken(res.csrfToken))
     }, [])
 
     const handleFileChange = (e: SyntheticEvent<HTMLInputElement>) => {

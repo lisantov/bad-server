@@ -39,7 +39,7 @@ export default function AdminNewProduct() {
         isValid && Boolean(selectedFile) && Boolean(selectedCategory)
 
     useEffect(() => {
-        api.getCsrfToken().then(res => setCsrfToken(res.data))
+        api.getCsrfToken().then(res => setCsrfToken(res.csrfToken))
     }, [])
 
     const navigateAdminList = () => navigate(AppRoute.Admin)
