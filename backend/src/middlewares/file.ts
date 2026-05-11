@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { Request, Express } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 import { mkdirSync } from 'fs'
@@ -29,7 +30,9 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: FileNameCallback
     ) => {
-        cb(null, file.originalname)
+        const ext = file.originalname.split('.').pop()
+        const uniqueName = `${Date.now()}-${crypto.randomUUID()}${ext ? `.${ext}` : ''}`
+        cb(null, uniqueName)
     },
 })
 
@@ -53,4 +56,4 @@ const fileFilter = (
     return cb(null, true)
 }
 
-export default multer({ storage, fileFilter })
+export default multer({ storage, fileFilter, limits: { fileSize: 1024 * 1024 * 10 } })
