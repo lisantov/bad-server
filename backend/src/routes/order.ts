@@ -17,7 +17,7 @@ const orderRouter = Router()
 const csrfProtection: RequestHandler = csrf({ cookie: true }) as unknown as RequestHandler
 
 orderRouter.post('/', auth, csrfProtection, validateOrderBody, createOrder)
-orderRouter.get('/all', auth, getOrders)
+orderRouter.get('/all', roleGuardMiddleware(Role.Admin), auth, getOrders)
 orderRouter.get('/all/me', auth, getOrdersCurrentUser)
 orderRouter.get(
     '/:orderNumber',
