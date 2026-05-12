@@ -1,4 +1,4 @@
-https://github.com/lisantov/bad-server/pull/1
+https://github.com/lisantov/bad-server
 # Проектная работа "WebLarek. Плохой сервер.", спринт 17
 
 ## Подготовка к работе
@@ -14,5 +14,5 @@ docker compose up -d
 6. Админка находится по адресу http://localhost/admin/
 
 ## Информация
-1. [https://github.com/lisantov/bad-server/pull/1](https://github.com/lisantov/bad-server)
+1. [https://github.com/lisantov/bad-server](https://github.com/lisantov/bad-server)
 2. Тюрин Никита Олегович, 43 когорта, Fullstack Разработчик
