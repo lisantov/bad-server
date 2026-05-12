@@ -25,12 +25,15 @@ export const getProductById = createAsyncThunk<IProduct, string>(
     }
 )
 
-export const createProduct = createAsyncThunk<IProduct, Omit<IProduct, '_id'>>(
-    'products/createProduct',
-    (data, { extra: { createProduct } }) => {
-        return createProduct(data)
+export const createProduct = createAsyncThunk<
+    IProduct,
+    {
+        data: Omit<IProduct, '_id'>
+        csrf: string
     }
-)
+>('products/createProduct', ({ data, csrf }, { extra: { createProduct } }) => {
+    return createProduct(data, csrf)
+})
 
 export const uploadImageFile = createAsyncThunk<IFile, FormData>(
     'products/uploadImageFile',
@@ -41,14 +44,14 @@ export const uploadImageFile = createAsyncThunk<IFile, FormData>(
 
 export const updateProduct = createAsyncThunk<
     IProduct,
-    { data: Partial<Omit<IProduct, '_id'>>; id: string }
->('products/updateProduct', ({ data, id }, { extra: { updateProduct } }) => {
-    return updateProduct(data, id)
+    { data: Partial<Omit<IProduct, '_id'>>; id: string; csrf: string }
+>('products/updateProduct', ({ data, id, csrf }, { extra: { updateProduct } }) => {
+    return updateProduct(data, id, csrf)
 })
 
-export const deleteProduct = createAsyncThunk<IProduct, string>(
+export const deleteProduct = createAsyncThunk<IProduct, { id: string; csrf: string }>(
     'products/deleteProduct',
-    (id, { extra: { deleteProduct } }) => {
-        return deleteProduct(id)
+    ({ id, csrf }, { extra: { deleteProduct } }) => {
+        return deleteProduct(id, csrf)
     }
 )

@@ -1,7 +1,7 @@
 import Button from '@components/button/button'
 import Form, { Input } from '@components/form'
 import useFormWithValidation from '@components/form/hooks/useFormWithValidation'
-import { SyntheticEvent, useRef } from 'react'
+import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useActionCreators } from '../../services/hooks'
@@ -9,6 +9,7 @@ import { userActions } from '../../services/slice/user'
 import { AppRoute } from '../../utils/constants'
 import { LoginFormValues } from './helpers/types'
 import styles from './login-page.module.scss'
+import api from '@api'
 export default function LoginPage() {
     const formRef = useRef<HTMLFormElement>(null)
     const { values, handleChange, errors, isValid } =
@@ -17,10 +18,15 @@ export default function LoginPage() {
             formRef.current
         )
     const { loginUser } = useActionCreators(userActions)
+    const [csrfToken, setCsrfToken] = useState<string>('')
+
+    useEffect(() => {
+        api.getCsrfToken().then(res => setCsrfToken(res.csrfToken))
+    }, [])
 
     const handleFormSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
-        loginUser(values)
+        loginUser({ dataUser: values, csrf: csrfToken })
             .unwrap()
             .catch((err) => {
                 toast.error(err.message)

@@ -24,10 +24,10 @@ export const getOrderByNumber = createAsyncThunk<IOrderResult, string>(
 
 export const updateOrderById = createAsyncThunk<
     IOrderResult,
-    { status: StatusType; orderNumber: string }
+    { status: StatusType; orderNumber: string, csrf: string }
 >(
     'orders/updateOrderById',
-    ({ status, orderNumber }, { extra: { updateOrderStatus } }) => {
-        return updateOrderStatus(status, orderNumber)
+    ({ status, orderNumber, csrf }, { extra: { updateOrderStatus } }) => {
+        return updateOrderStatus(status, orderNumber, csrf)
     }
 )

@@ -100,7 +100,7 @@ export interface IWebLarekAPI {
         filters: Record<string, unknown>
     ) => Promise<IProductPaginationResult>
     getProductItem: (id: string) => Promise<IProduct>
-    createOrder: (order: IOrder) => Promise<IOrderResult>
+    createOrder: (order: IOrder, csrf: string) => Promise<IOrderResult>
 }
 
 export class WebLarekAPI extends Api implements IWebLarekAPI {
@@ -146,20 +146,22 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
         }))
     }
 
-    createOrder = (order: IOrder): Promise<IOrderResult> => {
+    createOrder = (order: IOrder, csrf: string): Promise<IOrderResult> => {
         return this.requestWithRefresh<IOrderResult>('/order', {
             method: 'POST',
             body: JSON.stringify(order),
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${getCookie('accessToken')}`,
+                'X-CSRF-Token': csrf
             },
         }).then((data: IOrderResult) => data)
     }
 
     updateOrderStatus = (
         status: StatusType,
-        orderNumber: string
+        orderNumber: string,
+        csrf: string
     ): Promise<IOrderResult> => {
         return this.requestWithRefresh<IOrderResult>(`/order/${orderNumber}`, {
             method: 'PATCH',
@@ -167,6 +169,7 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${getCookie('accessToken')}`,
+                'X-CSRF-Token': csrf
             },
         })
     }
@@ -226,23 +229,25 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
         )
     }
 
-    loginUser = (data: UserLoginBodyDto) => {
+    loginUser = (data: UserLoginBodyDto, csrf: string) => {
         return this.request<UserResponseToken>('/auth/login', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrf
             },
             credentials: 'include',
         })
     }
 
-    registerUser = (data: UserRegisterBodyDto) => {
+    registerUser = (data: UserRegisterBodyDto, csrf: string) => {
         return this.request<UserResponseToken>('/auth/register', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrf
             },
             credentials: 'include',
         })
@@ -298,7 +303,14 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
         })
     }
 
-    createProduct = (data: Omit<IProduct, '_id'>) => {
+    getCsrfToken = () => {
+        return this.request<{ csrfToken: string }>('/auth/csrf-token', {
+            method: 'GET',
+            credentials: 'include',
+        })
+    }
+
+    createProduct = (data: Omit<IProduct, '_id'>, csrf: string) => {
         console.log(data)
         return this.requestWithRefresh<IProduct>('/product', {
             method: 'POST',
@@ -306,6 +318,7 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${getCookie('accessToken')}`,
+                'X-CSRF-Token': csrf
             },
         }).then((data: IProduct) => ({
             ...data,
@@ -329,13 +342,14 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
         }))
     }
 
-    updateProduct = (data: Partial<Omit<IProduct, '_id'>>, id: string) => {
+    updateProduct = (data: Partial<Omit<IProduct, '_id'>>, id: string, csrf: string) => {
         return this.requestWithRefresh<IProduct>(`/product/${id}`, {
             method: 'PATCH',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${getCookie('accessToken')}`,
+                'X-CSRF-Token': csrf
             },
         }).then((data: IProduct) => ({
             ...data,
@@ -346,11 +360,12 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
         }))
     }
 
-    deleteProduct = (id: string) => {
+    deleteProduct = (id: string, csrf: string) => {
         return this.requestWithRefresh<IProduct>(`/product/${id}`, {
             method: 'DELETE',
             headers: {
                 Authorization: `Bearer ${getCookie('accessToken')}`,
+                'X-CSRF-Token': csrf
             },
         })
     }

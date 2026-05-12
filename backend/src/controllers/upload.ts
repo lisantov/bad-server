@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
+import sharp from 'sharp'
 import BadRequestError from '../errors/bad-request-error'
+
+const MIN_SIZE = 1024 * 2 // 2Кб
 
 export const uploadFile = async (
     req: Request,
@@ -11,9 +14,19 @@ export const uploadFile = async (
         return next(new BadRequestError('Файл не загружен'))
     }
     try {
+        if (req.file.size < MIN_SIZE) {
+            return next(new BadRequestError('Файл должен быть не менее 2 Кбайт'))
+        }
+
+        try {
+            await sharp(req.file.path).metadata()
+        } catch {
+            return next(new BadRequestError('Файл не является изображением'))
+        }
+
         const fileName = process.env.UPLOAD_PATH
             ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
-            : `/${req.file?.filename}`
+            : `/${req.file.filename}`
         return res.status(constants.HTTP_STATUS_CREATED).send({
             fileName,
             originalName: req.file?.originalname,

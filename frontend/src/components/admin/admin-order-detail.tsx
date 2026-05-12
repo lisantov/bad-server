@@ -6,7 +6,7 @@ import { useActionCreators, useDispatch, useSelector } from '@store/hooks'
 import { StatusType } from '@types'
 import clsx from 'clsx'
 import { format } from 'date-fns'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { selectOrderByNumber } from '../../services/selector'
 import { ordersActions } from '../../services/slice/orders'
@@ -14,13 +14,20 @@ import { getOrderByNumber } from '../../services/slice/orders/thunk'
 import { adapterOrderFromServer } from '../../utils/adapterOrderFromServer'
 import { Preloader } from '../preloader'
 import styles from './admin.module.scss'
+import api from '@api'
 
 const ActionsButton = () => {
     const number = useParams().number || ''
     const navigate = useNavigate()
+    const [csrfToken, setCsrfToken] = useState<string>('')
     const { updateOrderById } = useActionCreators(ordersActions)
+
+    useEffect(() => {
+        api.getCsrfToken().then(res => setCsrfToken(res.csrfToken))
+    }, [])
+
     const handleUpdateOrder = (status: StatusType) => {
-        updateOrderById({ status, orderNumber: number })
+        updateOrderById({ status, orderNumber: number, csrf: csrfToken })
         navigate(-1)
     }
     return (
@@ -124,7 +131,7 @@ export default function AdminOrderDetail() {
                 extraClass: styles.admin__gridRowFullWidth,
             },
         ],
-        [orderData]
+        [navigate, orderData]
     )
 
     if (!orderData) {
